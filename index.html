@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel.com - Vacation Packages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-roboto">
+    <header class="bg-blue-600 text-white">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <div class="flex items-center">
+                <img src="https://storage.googleapis.com/a1aa/image/CizLW4IqEEJWDBMTc8jx7GWvqxo3E68zc4tdCdBumvSpYj9E.jpg" alt="Travel.com logo with a globe and airplane icon" class="h-12" width="150" height="50">
+                <nav class="ml-10 space-x-4">
+                    <a href="#" class="hover:underline">Flights</a>
+                    <a href="#" class="hover:underline">Hotels</a>
+                    <a href="#" class="hover:underline">Car Rentals</a>
+                    <a href="#" class="hover:underline">Vacation Packages</a>
+                </nav>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="signin.html" class="hover:underline">Sign In</a>
+                <a href="registre.html" class="hover:underline">Register</a>
+                <a href="#" class="hover:underline"><i class="fas fa-globe"></i> EN</a>
+            </div>
+        </div>
+    </header>
+    <main class="bg-gray-100">
+        <section class="container mx-auto py-12 px-6">
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <h1 class="text-3xl font-bold mb-6">Find the Best Deals on Vacation Packages</h1>
+                <form id="searchForm" class="space-y-4">
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label for="origin" class="block text-sm font-medium text-gray-700">From</label>
+                            <input type="text" id="origin" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="City or Airport">
+                        </div>
+                        <div class="flex-1">
+                            <label for="destination" class="block text-sm font-medium text-gray-700">To</label>
+                            <input type="text" id="destination" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" placeholder="City or Airport">
+                        </div>
+                    </div>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <label for="departureDate" class="block text-sm font-medium text-gray-700">Departure</label>
+                            <input type="date" id="departureDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                        <div class="flex-1">
+                            <label for="returnDate" class="block text-sm font-medium text-gray-700">Return</label>
+                            <input type="date" id="returnDate" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md shadow-md hover:bg-blue-700">Search</button>
+                </form>
+            </div>
+        </section>
+        <section class="container mx-auto py-12 px-6">
+            <h2 class="text-2xl font-bold mb-6">Vacation Packages</h2>
+            <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+    </main>
+    <footer class="bg-blue-600 text-white py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <img src="https://storage.googleapis.com/a1aa/image/CizLW4IqEEJWDBMTc8jx7GWvqxo3E68zc4tdCdBumvSpYj9E.jpg" alt="Travel.com logo with a globe and airplane icon" class="h-12" width="150" height="50">
+                </div>
+                <div class="space-x-4">
+                    <a href="#" class="hover:underline">About Us</a>
+                    <a href="#" class="hover:underline">Contact</a>
+                    <a href="#" class="hover:underline">Privacy Policy</a>
+                    <a href="#" class="hover:underline">Terms of Service</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p>© 2023 Travel.com. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const origin = document.getElementById('origin').value;
+            const destination = document.getElementById('destination').value;
+            const departureDate = document.getElementById('departureDate').value;
+            const returnDate = document.getElementById('returnDate').value;
+
+            const response = await fetch(`http://localhost:3000/vacation-packages?origin=${origin}&destination=${destination}&departureDate=${departureDate}&returnDate=${returnDate}`);
+            const vacationPackages = await response.json();
+
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            vacationPackages.forEach(package => {
+                const packageElement = document.createElement('div');
+                packageElement.classList.add('bg-white', 'p-4', 'rounded-lg', 'shadow-lg');
+
+                const flightInfo = `
+                    <h3 class="text-xl font-bold mt-4">Flight</h3>
+                    <p class="text-gray-700">From: ${package.flight.itineraries[0].segments[0].departure.iataCode}</p>
+                    <p class="text-gray-700">To: ${package.flight.itineraries[0].segments[0].arrival.iataCode}</p>
+                    <p class="text-gray-700">Departure: ${package.flight.itineraries[0].segments[0].departure.at}</p>
+                    <p class="text-gray-700">Arrival: ${package.flight.itineraries[0].segments[0].arrival.at}</p>
+                `;
+
+                const hotelInfo = `
+                    <h3 class="text-xl font-bold mt-4">Hotel</h3>
+                    <p class="text-gray-700">Name: ${package.hotel.hotel.name}</p>
+                    <p class="text-gray-700">Address: ${package.hotel.hotel.address.lines.join(', ')}</p>
+                    <p class="text-gray-700">Rating: ${package.hotel.hotel.rating}</p>
+                `;
+
+                packageElement.innerHTML = flightInfo + hotelInfo;
+                resultsContainer.appendChild(packageElement);
+            });
+        });
+    </script>
+</body>
+</html>
